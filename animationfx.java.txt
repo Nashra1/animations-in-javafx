@@ -1,0 +1,192 @@
+/*
+ * Class name: Grade 12, Computer Science, University Preparation
+ * Author name: Nashra Hossain
+ * Date: Tuesday, February 21st, 2022
+ * Teacher name: Jeff Radulovic
+ * Class code: ICS4U1-8A
+ * Brief description of class: This class animates 2 spaceships playing cosmic tag.
+ */
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+public class Q3 extends Application 
+{
+		// define the width and height of the window
+		private final int WIDTH = 600;
+		private final int HEIGHT = 600;
+		
+		//position of the circle to be drawn
+		private int x = 400;
+		private int y = 400;
+		private double x1 = 290;//x position of blue spaceship
+		private double y1 = 290;//y position of blue spaceship
+		double radius = 100;
+		private double x2 = 300;//x position of blue spaceship
+		private double y2 = 400;//y position of blue spaceship
+		private double degree_x = 0;//costheta
+		private double degree_y = 0;//sintheta
+		private double mouse_x = x1;//x position of mouse clicked
+		private double mouse_y = y1;//y position of mouse clicked
+		private double vel_maxb = 0.441;
+		private Color backgroundColor = Color.WHITE;
+		
+		private GraphicsContext gc;	// object that will allow us to draw on the screen
+
+		public static void main(String[] args) {
+			Application.launch(args);
+		}
+
+		@Override
+		public void start(Stage stage) throws Exception {
+			// Create the Canvas
+			Canvas canvas = new Canvas(WIDTH, HEIGHT);
+			// Set the width of the Canvas
+			canvas.setWidth(WIDTH);
+			// Set the height of the Canvas
+			canvas.setHeight(HEIGHT);
+
+			// Get the graphics context of the canvas
+			gc = canvas.getGraphicsContext2D();
+
+			// Create the Pane
+			Pane root = new Pane();
+
+			AnimationTimer timer = new AnimationTimer() {
+				long lastTime = System.nanoTime();
+				@Override
+				public void handle(long currentTime) {
+					double delta_Time = (currentTime - lastTime)/1000000000.0;
+					lastTime = currentTime;
+					upDate(delta_Time);
+					// draw the scene using the GraphicsContext gc
+					render(gc);
+				}
+			};
+			timer.start();	// starts the loop
+
+			// Add the Canvas to the Pane
+			root.getChildren().add(canvas);
+			// Create the Scene
+			Scene scene = new Scene(root);
+			
+			// define keyboard event handlers
+			/**
+			 * This method will be automatically called whenever a keyboard button is pressed.  The key pressed is available by using the
+			 * event.getCode() method.  Each key value is statically defined in the KeyCode class, which can then be compared to the 
+			 * event.getCode() value.  The example below notifies the user if the UP or DOWN arrow keys have been pressed by printing them.
+			 */
+			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					if(event.getCode() == KeyCode.UP) 
+					{
+						System.out.println("UP key pressed.");
+					}else if(event.getCode() == KeyCode.DOWN)
+					{
+						System.out.println("DOWN key pressed.");
+					}
+				}
+			});
+			
+			// define mouse event handlers
+			/**
+			 * This method will be automatically called whenever the left mouse button is clicked on the screen.
+			 * The location of the mouse click will be available using the methods event.getX() and event.getY(), as shown below.
+			 */
+			scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println("Mouse button clicked at location (" + event.getX()
+										+ ", " + event.getY() + ")");
+					mouse_x = event.getX();
+					mouse_y = event.getY();
+				}
+			});
+
+			/**
+			 * This method will be automatically called whenever the mouse has been moved within the window
+			 */
+			scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					System.out.println("Mouse button moved.");
+				}
+			});
+
+			// Add the Scene to the Stage
+			stage.setScene(scene);
+			// Set the Title of the Stage
+			stage.setTitle("Q3");
+			// Display the Stage
+			stage.show();
+		}
+
+		/**
+		 * This method performs one frame of animation by calculating the new positions of all objects in the scene.
+		 * Write code that updates the positions of all your objects here
+		 * 
+		 * @param deltaT - the amount of time, in seconds, that has passed since the last call to this method
+		 */
+		public void upDate(double deltaT)
+		{
+		// Moving the red spaceship
+				degree_x = Math.toRadians(degree_x);
+				degree_y = Math.toRadians(degree_y);
+				x2 =(radius *((Math.cos(degree_x)))) + 290;
+				y2 =(radius *((Math.sin(degree_y)))) + 290;
+				degree_x = Math.toDegrees(degree_x) - 1;
+				degree_y = Math.toDegrees(degree_y) - 1;
+	    // Moving the blue spaceship
+				if(mouse_x - x1 > 0.441)
+				{
+					x1 = x1 + 0.441;
+				}else if(mouse_x - x1 < -0.441)
+				{
+					x1 = x1 - 0.441;
+				}
+				if(mouse_y - y1 > 0.441)
+				{
+					y1 = y1 + 0.441;
+				}else if(mouse_y - y1 < -0.441)
+				{
+					y1 = y1 - 0.441;
+				}
+		}
+
+		/**
+		 * This method handles all of the drawing or rendering of your scene.  Write your code the draws all of your objects here.
+		 * 
+		 * @param gc - the graphics context that we want to draw to (defined in the start() method)
+		 */
+		public void render(GraphicsContext gc)
+		{
+			// clear the screen
+			gc.setFill(backgroundColor);
+			gc.fillRect(0, 0, WIDTH, HEIGHT);
+			// Now draw the graphics objects
+			// Set fill to white
+			gc.setFill(Color.WHITE);
+			// making green plasma zone
+			gc.setFill(Color.GREEN);
+			gc.fillOval(WIDTH/3, HEIGHT/3, 200, 200);
+			// example of drawing text to the screen
+			gc.strokeText("Question 3", WIDTH/2-50, 30);
+			// make rocket ships
+			gc.setFill(Color.DARKBLUE);
+			gc.fillOval(x1, y1, 20, 20);
+			gc.setFill(Color.RED);
+			gc.fillOval(x2, y2, 20, 20);
+		}
+}
+
+	
+
